@@ -103,13 +103,14 @@ void f_param(FILE *f, char *filename) {
 void o_param(FILE *f, char *pattern) {
   char *line, *subline;
   int pattern_len = (int)strlen(pattern);
-  subline = (char *)malloc(pattern_len * sizeof(char));
+  subline = (char *)malloc(pattern_len * 2 * sizeof(char));
   while (feof(f) == 0) {
     line = read_line(f);
     for (int i = 0; i < ((int)strlen(line) - pattern_len); i++) {
       for (int j = 0; j < pattern_len; j++) {
         subline[j] = line[i + j];
       }
+        subline[pattern_len] = '\0';
       if (strcmp(pattern, subline) == 0) {
         printf("%s\n", pattern);
       }
