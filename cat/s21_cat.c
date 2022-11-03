@@ -1,24 +1,21 @@
 #include "s21_cat.h"
 
 int main(int argc, char *argv[]) {
-  int flag = 1, op_index = 0;
+  int op_index = 0;
   char c = '\0';
-  if (argc < 3) {
-    printf("No comandline argv!!");
-    flag = 0;
-  }
-  if ((c = getopt_long(argc, argv, ":b:e:n:s:t:v:E:T:", long_opts,
-                       &op_index)) != -1 &&
-      flag) {
-    if (c == '?') {
-      printf("Error comandline argv!!");
-      flag = 0;
+    if (argc == 2) {
+        entry_point('0', argv[1]);
+    } else if (argc == 3) {
+        if ((c = getopt_long(argc, argv, ":b:e:n:s:t:v:E:T:", long_opts, &op_index)) != -1) {
+            if (c == '?') {
+                printf("Error comandline argv!!");
+            } else {
+                entry_point(c, optarg);
+            }
+        }
     } else {
-      entry_point(c, optarg);
+        printf("Error argv!!");
     }
-  } else if (flag) {
-    entry_point('0', argv[optind]);
-  }
   return 0;
 }
 

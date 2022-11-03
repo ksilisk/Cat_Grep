@@ -3,22 +3,20 @@
 #include "grep_flags.h"
 
 int main(int argc, char *argv[]) {
-  int flag = 1;
   char c = '\0';
-  if (argc == 1 || argc < 3) {
-    printf("No comandline argv!!");
-    flag = 0;
-  }
-  if ((c = getopt(argc, argv, ":e:i:v:c:l:n:h:s:f:o:")) != -1 && flag) {
-    if (c == '?') {
-      printf("Error comandline argv!!");
-      flag = 0;
+    if (argc == 3) {
+        entry_point('e', argv[1], argv[2]);
+    } else if (argc == 4) {
+        if ((c = getopt(argc, argv, ":e:i:v:c:l:n:h:s:f:o:")) != -1) {
+            if (c == '?') {
+                printf("Error comandline argv!!");
+            } else {
+                entry_point(c, optarg, argv[optind]);
+            }
+        }
     } else {
-      entry_point(c, optarg, argv[optind]);
+        printf("Error argv!");
     }
-  } else if (flag) {
-    entry_point('e', argv[optind], argv[optind + 1]);
-  }
   return 0;
 }
 
