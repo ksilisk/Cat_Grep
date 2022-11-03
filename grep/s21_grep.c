@@ -4,19 +4,19 @@
 
 int main(int argc, char *argv[]) {
   char c = '\0';
-    if (argc == 3) {
-        entry_point('e', argv[1], argv[2]);
-    } else if (argc == 4) {
-        if ((c = getopt(argc, argv, ":e:i:v:c:l:n:h:s:f:o:")) != -1) {
-            if (c == '?') {
-                printf("Error comandline argv!!");
-            } else {
-                entry_point(c, optarg, argv[optind]);
-            }
-        }
-    } else {
-        printf("Error argv!");
+  if (argc == 3) {
+    entry_point('e', argv[1], argv[2]);
+  } else if (argc == 4) {
+    if ((c = getopt(argc, argv, ":e:i:v:c:l:n:h:s:f:o:")) != -1) {
+      if (c == '?') {
+        printf("Error comandline argv!!");
+      } else {
+        entry_point(c, optarg, argv[optind]);
+      }
     }
+  } else {
+    printf("Error argv!");
+  }
   return 0;
 }
 
@@ -109,11 +109,11 @@ char *get_lower_line(char *line) {
 int check_line(char *pattern, char *line, int flag) {
   regex_t regex;
   int reti, flag_result;
-    if (flag) {
-        reti = regcomp(&regex, pattern, REG_ICASE);
-    } else {
-        reti = regcomp(&regex, pattern, REG_EXTENDED);
-    }
+  if (flag) {
+    reti = regcomp(&regex, pattern, REG_ICASE);
+  } else {
+    reti = regcomp(&regex, pattern, REG_EXTENDED);
+  }
   reti = regexec(&regex, line, 0, NULL, 0);
   if (!reti) {
     flag_result = 1;

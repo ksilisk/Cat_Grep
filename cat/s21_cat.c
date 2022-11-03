@@ -3,19 +3,20 @@
 int main(int argc, char *argv[]) {
   int op_index = 0;
   char c = '\0';
-    if (argc == 2) {
-        entry_point('0', argv[1]);
-    } else if (argc == 3) {
-        if ((c = getopt_long(argc, argv, ":b:e:n:s:t:v:E:T:", long_opts, &op_index)) != -1) {
-            if (c == '?') {
-                printf("Error comandline argv!!");
-            } else {
-                entry_point(c, optarg);
-            }
-        }
-    } else {
-        printf("Error argv!!");
+  if (argc == 2) {
+    entry_point('0', argv[1]);
+  } else if (argc == 3) {
+    if ((c = getopt_long(argc, argv, ":b:e:n:s:t:v:E:T:", long_opts,
+                         &op_index)) != -1) {
+      if (c == '?') {
+        printf("Error comandline argv!!");
+      } else {
+        entry_point(c, optarg);
+      }
     }
+  } else {
+    printf("Error argv!!");
+  }
   return 0;
 }
 
