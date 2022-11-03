@@ -3,7 +3,7 @@
 int main(int argc, char *argv[]) {
   int flag = 1, op_index = 0;
   char c = '\0';
-  if (argc == 1) {
+  if (argc < 3) {
     printf("No comandline argv!!");
     flag = 0;
   }
