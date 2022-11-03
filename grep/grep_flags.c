@@ -110,7 +110,7 @@ void o_param(FILE *f, char *pattern) {
       for (int j = 0; j < pattern_len; j++) {
         subline[j] = line[i + j];
       }
-      if (check_line(pattern, subline, 0) == 1) {
+      if (strcmp(pattern, subline) == 0) {
         printf("%s\n", pattern);
       }
     }
