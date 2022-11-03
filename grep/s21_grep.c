@@ -108,20 +108,24 @@ char *get_lower_line(char *line) {
   return lower_line;
 }
 
-int check_line(char *pattern, char *line) {
+int check_line(char *pattern, char *line, int flag) {
   regex_t regex;
-  int reti, flag;
-  reti = regcomp(&regex, pattern, REG_EXTENDED);
+  int reti, flag_result;
+    if (flag) {
+        reti = regcomp(&regex, pattern, REG_ICASE);
+    } else {
+        reti = regcomp(&regex, pattern, REG_EXTENDED);
+    }
   reti = regexec(&regex, line, 0, NULL, 0);
   if (!reti) {
-    flag = 1;
+    flag_result = 1;
   } else if (reti == REG_NOMATCH) {
-    flag = 0;
+    flag_result = 0;
   } else {
-    flag = -1;
+    flag_result = -1;
   }
   regfree(&regex);
-  return flag;
+  return flag_result;
 }
 
 char **get_patterns(FILE *p) {

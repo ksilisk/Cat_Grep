@@ -4,7 +4,7 @@ void e_param(FILE *f, char *pattern) {
   char *line;
   while (feof(f) == 0) {
     line = read_line(f);
-    if (check_line(pattern, line) == 1) {
+    if (check_line(pattern, line, 0) == 1) {
       printf("%s", line);
     }
     free(line);
@@ -13,25 +13,20 @@ void e_param(FILE *f, char *pattern) {
 
 void i_param(FILE *f, char *pattern) {
   char *line;
-  char *lower_line;
-  pattern = get_lower_line(pattern);
   while (feof(f) == 0) {
     line = read_line(f);
-    lower_line = get_lower_line(line);
-    if (check_line(pattern, lower_line) == 1) {
+    if (check_line(pattern, line, 1) == 1) {
       printf("%s", line);
     }
     free(line);
-    free(lower_line);
   }
-  free(pattern);
 }
 
 void v_param(FILE *f, char *pattern) {
   char *line;
   while (feof(f) == 0) {
     line = read_line(f);
-    if (check_line(pattern, line) == 0) {
+    if (check_line(pattern, line, 0) == 0) {
       printf("%s", line);
     }
     free(line);
@@ -43,7 +38,7 @@ void c_param(FILE *f, char *pattern) {
   int count = 0;
   while (feof(f) == 0) {
     line = read_line(f);
-    if (check_line(pattern, line) == 1) {
+    if (check_line(pattern, line, 0) == 1) {
       count++;
     }
     free(line);
@@ -56,7 +51,7 @@ void l_param(FILE *f, char *pattern, char *filename) {
   int flag = 0;
   while (feof(f) == 0) {
     line = read_line(f);
-    if (check_line(pattern, line) == 1) {
+    if (check_line(pattern, line, 0) == 1) {
       flag = 1;
     }
     free(line);
@@ -71,7 +66,7 @@ void n_param(FILE *f, char *pattern) {
   int count = 1;
   while (feof(f) == 0) {
     line = read_line(f);
-    if (check_line(pattern, line) == 1) {
+    if (check_line(pattern, line, 0) == 1) {
       printf("%d:%s", count, line);
     }
     free(line);
@@ -89,7 +84,7 @@ void f_param(FILE *f, char *filename) {
     while (feof(f) == 0) {
       line = read_line(f);
       for (int i = 0; i < count; i++) {
-        if (check_line(patterns[i], line) == 1) {
+        if (check_line(patterns[i], line, 0) == 1) {
           printf("%s", line);
           break;
         }
@@ -115,7 +110,7 @@ void o_param(FILE *f, char *pattern) {
       for (int j = 0; j < pattern_len; j++) {
         subline[j] = line[i + j];
       }
-      if (check_line(pattern, subline) == 1) {
+      if (check_line(pattern, subline, 0) == 1) {
         printf("%s\n", pattern);
       }
     }
