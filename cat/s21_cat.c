@@ -1,156 +1,99 @@
 #include "s21_cat.h"
 
 int main(int argc, char *argv[]) {
-  int op_index = 0;
-  char c = '\0';
-  if (argc == 2) {
-    entry_point('0', argv[1]);
-  } else if (argc == 3) {
-    if ((c = getopt_long(argc, argv, ":b:e:n:s:t:v:E:T:", long_opts,
-                         &op_index)) != -1) {
-      if (c == '?') {
-        printf("Error comandline argv!!");
-      } else {
-        entry_point(c, optarg);
-      }
+  char get_opt;
+  int error = 0, op_index = 0;
+
+  while (!error && (get_opt = getopt_long(argc, argv, ":benstvET", long_options,
+                                          &op_index)) != -1) {
+    switch (get_opt) {
+      case 'b':
+        options.b = 1;
+        options.n = 0;
+        break;
+      case 'e':
+        options.E = 1;
+        options.v = 1;
+        break;
+      case 't':
+        options.T = 1;
+        options.v = 1;
+        break;
+      case 'n':
+        options.n = !options.b;
+        break;
+      case 's':
+        options.s = 1;
+        break;
+      case 'v':
+        options.v = 1;
+        break;
+      case 'E':
+        options.E = 1;
+        break;
+      case 'T':
+        options.T = 1;
+        break;
+      default:
+        error = 1;
+        break;
     }
-  } else {
-    printf("Error argv!!");
   }
+
+  if (!error) {
+    while (optind < argc) {
+      if (print_file(argv[optind]))
+        printf("%s: No such file or directory\n", argv[optind]);
+      optind++;
+    }
+  } else
+    printf("Error comandline argv!");
   return 0;
 }
 
-void entry_point(char option, char *filename) {
-  FILE *f;
-  if ((f = fopen(filename, "r")) != NULL) {
-    switch (option) {
-      case 'b':
-        b_param(f);
-        break;
-      case 'e':
-        e_param(f, 1);
-        break;
-      case 'E':
-        e_param(f, 0);
-        break;
-      case 'n':
-        n_param(f);
-        break;
-      case 's':
-        s_param(f);
-        break;
-      case 't':
-        t_param(f, 1);
-        break;
-      case 'T':
-        t_param(f, 0);
-        break;
-      case 'v':
-        v_param(f);
-        break;
-      case '0':
-        non_param(f);
-        break;
-    }
-    fclose(f);
-  } else {
-    printf("File error!!");
-  }
-}
-
-void non_param(FILE *f) {
+int print_file(char *filename) {
   char ch = '\0';
-  while ((ch = fgetc(f)) != EOF) {
-    printf("%c", ch);
-  }
-}
+  int result;
+  int nlc = 1;  // new lines count
+  FILE *f = fopen(filename, "r");
 
-void b_param(FILE *f) {
-  char ch = '\0';
-  int count = 1;
-  while ((ch = fgetc(f)) != EOF) {
-    if (ch != '\n') {
-      printf("%6d\t", count++);
-      while (ch != '\n' && ch != EOF) {
-        printf("%c", ch);
-        ch = fgetc(f);
-      }
-      printf("\n");
-    } else {
-      printf("\n");
-    }
-  }
-}
+  !f ? (result = 0) : (result = 1);
 
-void e_param(FILE *f, int flag) {
-  char ch = '\0';
-  while ((ch = fgetc(f)) != EOF) {
-    if (ch == '\n') {
-      printf("$");
-    }
-    flag ? non_printing(ch) : printf("%c", ch);
-  }
-}
-
-void n_param(FILE *f) {
-  char ch = '\0';
-  int count = 1;
-  while ((ch = fgetc(f)) != EOF) {
-    printf("%6d\t", count++);
-    while (ch != '\n' && ch != EOF) {
-      printf("%c", ch);
+  while (result && feof(f) == 0 && (ch = fgetc(f)) != -1) {
+    if (ch == '\n' && options.s && nlc >= 2) {
       ch = fgetc(f);
+      continue;
     }
-    printf("\n");
-  }
-}
 
-void s_param(FILE *f) {
-  char ch = '\0';
-  int count = 1;
-  while ((ch = fgetc(f)) != EOF) {
-    if (ch == '\n') {
-      if (count < 2) {
-        printf("%c", ch);
-        count++;
-      }
-    } else {
-      count = 0;
-      printf("%c", ch);
-    }
-  }
-}
+    if (nlc && (options.n || (ch != '\n' && options.b)))
+      printf("%6d\t", ++count_lines);
 
-void t_param(FILE *f, int flag) {
-  char ch = '\0';
-  while ((ch = fgetc(f)) != EOF) {
-    if (ch == '\t') {
+    if (options.E && ch == '\n') printf("$");
+
+    if (options.T && ch == '\t')
       printf("^I");
-    } else {
-      flag ? non_printing(ch) : printf("%c", ch);
+    else {
+      ch == '\n' ? nlc++ : (nlc = 0);
+      options.v ? non_print(ch) : printf("%c", ch);
     }
   }
+
+  if (result) fclose(f);
+
+  return !result;
 }
 
-void v_param(FILE *f) {
-  char ch = '\0';
-  while ((ch = fgetc(f)) != EOF) {
-    non_printing(ch);
-  }
-}
-
-void non_printing(char ch) {
-  if (ch < -96) {
-    printf("M-^%c", ch + 192);
-  } else if (ch < 0) {
-    printf("M-%c", ch + 128);
-  } else if (ch == 9 || ch == 10) {
-    printf("%c", ch);
-  } else if (ch < 32) {
-    printf("^%c", ch + 64);
-  } else if (ch < 127) {
-    printf("%c", ch);
-  } else {
+void non_print(char c) {
+  if (c < -96)
+    printf("M-^%c", c + 192);
+  else if (c < 0)
+    printf("M-%c", c + 128);
+  else if (c == 9 || c == 10)
+    printf("%c", c);
+  else if (c < 32)
+    printf("^%c", c + 64);
+  else if (c < 127)
+    printf("%c", c);
+  else
     printf("^?");
-  }
 }

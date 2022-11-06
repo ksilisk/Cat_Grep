@@ -1,20 +1,23 @@
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 
-static struct option long_opts[] = {
-    {"number-nonblank", required_argument, NULL, 'b'},
-    {"number", required_argument, NULL, 'n'},
-    {"squeeze-blank", required_argument, NULL, 's'},
-    {0, 0, NULL, 0}};
+static struct option long_options[] = {{"number-nonblank", no_argument, 0, 'b'},
+                                       {"number", no_argument, 0, 'n'},
+                                       {"squeeze-blank", no_argument, 0, 's'},
+                                       {0, 0, 0, 0}};
 
-void entry_point(char option, char *filename);
-void non_printing(char ch);
-void e_param(FILE *f, int flag);
-void t_param(FILE *f, int flag);
-void non_param(FILE *f);
-void b_param(FILE *f);
-void n_param(FILE *f);
-void s_param(FILE *f);
-void v_param(FILE *f);
+typedef struct {
+  int b;
+  int n;
+  int s;
+  int v;
+  int E;
+  int T;
+} flags;
+
+int count_lines = 0;
+flags options = {0, 0, 0, 0, 0, 0};
+
+int print_file(char *filename);
+void non_print(char c);

@@ -1,13 +1,28 @@
-#include <ctype.h>
 #include <getopt.h>
 #include <regex.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-void entry_point(char option, char *pattern, char *filename);
-int check_line(char *pattern, char *line, int flag);
-int len_patterns(FILE *p);
-char *read_line(FILE *f);
-char *add_char(char *res, int *len, int i, char c);
-char **get_patterns(FILE *p);
+#define MAX_COUNT_TEMPLATES 1024
+#define MAX_LINE_LENGTH 2048
+
+typedef struct {
+  int e;
+  int i;
+  int v;
+  int c;
+  int l;
+  int n;
+  int h;
+  int s;
+  int f;
+  int o;
+} flags;
+
+flags options = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+int print_matches(regex_t *templates, int count_templates, char *filename);
+int read_file_templates(regex_t *templates, int *count_templates,
+                        char *filename);
+void free_templates(regex_t *templates, int count);
